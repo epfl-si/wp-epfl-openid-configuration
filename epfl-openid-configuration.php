@@ -10,12 +10,12 @@
 $openid_possible_env_keys = [
     'OIDC_LOGIN_TYPE',
     'OIDC_CLIENT_ID',
-    'OIDC_CLIENT_SECRET',
+    'OIDC_CLIENT_SECRET', # Should stay empty for single page app (SAP)
     'OIDC_CLIENT_SCOPE',
     'OIDC_ENDPOINT_LOGIN_URL',
     'OIDC_ENDPOINT_TOKEN_URL',
-    'OIDC_ENDPOINT_LOGOUT_URL', # Should usually stay empty
-    'OIDC_ENDPOINT_USERINFO_URL', # Should usually stay empty
+    'OIDC_ENDPOINT_LOGOUT_URL', # Should stay empty
+    'OIDC_ENDPOINT_USERINFO_URL', # Should stay empty
     'OIDC_ACR_VALUES',
     'OIDC_ENFORCE_PRIVACY',
     'OIDC_LINK_EXISTING_USERS',
@@ -38,6 +38,37 @@ foreach ($openid_possible_env_keys as $openid_env_key) {
     }
     define($openid_env_key, $env_value);
 }
+
+// Swicth to PKCE workflow if no secret has been provided : used for single page apps (SAP) configuration
+add_filter('openid-connect-generic-auth-url', function( $url ) {
+    if (getenv('OIDC_CLIENT_SECRET') !== false) {
+        return $url;
+    }
+    // Generate a random string for the code challenge
+    $code_challenge = bin2hex(random_bytes(64));
+    $hash = hash('sha256', $code_challenge, true);
+    $code_challenge = rtrim(strtr(base64_encode($hash), '+/', '-_'), '=');
+    $url.= '&code_challenge=' . $code_challenge;
+    session_start();
+    $_SESSION['code_verifier'] = $code_challenge;
+    session_write_close();
+    return $url;
+});
+add_filter('openid-connect-generic-alter-request', function( $request, $operation ) {
+    if ( $operation != 'get-authentication-token' && $operation != 'refresh-token' ) {
+        return $request;
+    }
+    if (getenv('OIDC_CLIENT_SECRET') !== false) {
+        return $request;
+    }
+    unset($request['body']['client_secret']);
+    $urlparts = wp_parse_url(home_url());
+    $domain = $urlparts['host'];
+    $request['headers']['Origin'] = home_url();
+    session_start();
+    $request['body']['code_verifier'] = $_SESSION['code_verifier'];
+    return $request;
+}, 10, 2);
 
 // Add check for Accred plugin before validation OpenID login
 // Update user data based on token
