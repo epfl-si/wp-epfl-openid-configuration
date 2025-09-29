@@ -93,6 +93,16 @@ $settings['nickname_key'] = 'uniqueid';
 $settings['identity_key'] = 'given_name';
 $settings['email_format'] = '{email}';
 $settings['endpoint_userinfo'] = '';
+
+$settings['login_type'] = defined('OIDC_LOGIN_TYPE') ? OIDC_LOGIN_TYPE : 'button';
+$settings['client_id'] = defined('OIDC_CLIENT_ID') ? OIDC_CLIENT_ID : '';
+$settings['scope'] = defined('OIDC_CLIENT_SCOPE') ? OIDC_CLIENT_SCOPE : 'openid profile email';
+$settings['endpoint_login'] = defined('OIDC_ENDPOINT_LOGIN_URL') ? OIDC_ENDPOINT_LOGIN_URL : '';
+$settings['endpoint_token'] = defined('OIDC_ENDPOINT_TOKEN_URL') ? OIDC_ENDPOINT_TOKEN_URL : '';
+$settings['acr_values'] = defined('OIDC_ACR_VALUES') ? OIDC_ACR_VALUES : '';
+$settings['enforce_privacy'] = defined('OIDC_ENFORCE_PRIVACY') ? OIDC_ENFORCE_PRIVACY : true;
+$settings['link_existing_users'] = defined('OIDC_LINK_EXISTING_USERS') ? OIDC_LINK_EXISTING_USERS : true;
+$settings['create_if_does_not_exist'] = defined('OIDC_CREATE_IF_DOES_NOT_EXIST') ? OIDC_CREATE_IF_DOES_NOT_EXIST : true;
 update_option('openid_connect_generic_settings', $settings);
 
 // Update plugin configuration fields:
