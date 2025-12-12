@@ -6,42 +6,60 @@
     Author:      EPFL SI
 */
 
-// Set WordPress ENVs based on system env variables with the same name
-$openid_possible_env_keys = [
-    'OIDC_LOGIN_TYPE',
-    'OIDC_CLIENT_ID',
-    'OIDC_CLIENT_SECRET', # Should stay empty for single page app (SAP)
-    'OIDC_CLIENT_SCOPE',
-    'OIDC_ENDPOINT_LOGIN_URL',
-    'OIDC_ENDPOINT_TOKEN_URL',
-    'OIDC_ENDPOINT_LOGOUT_URL', # Should stay empty
-    'OIDC_ENDPOINT_USERINFO_URL', # Should stay empty
-    'OIDC_ACR_VALUES',
-    'OIDC_ENFORCE_PRIVACY',
-    'OIDC_LINK_EXISTING_USERS',
-    'OIDC_CREATE_IF_DOES_NOT_EXIST',
-    'OIDC_REDIRECT_USER_BACK',
-    'OIDC_REDIRECT_ON_LOGOUT',
-    'OIDC_ENABLE_LOGGING',
-    'OIDC_LOG_LIMIT'
-];
-foreach ($openid_possible_env_keys as $openid_env_key) {
-    $env_value = getenv($openid_env_key);
-    if ( $env_value === false ) {
-        continue;
+function plugin_activate() {
+    // Get settings from database
+    $settings = get_option('openid_connect_generic_settings', array());
+
+    // Set plugin options based on system env variables, if defined
+    $openid_possible_env_keys = [
+        'OIDC_LOGIN_TYPE',
+        'OIDC_CLIENT_ID',
+        'OIDC_CLIENT_SECRET', # Should stay empty for single page app (SPA)
+        'OIDC_SCOPE',
+        'OIDC_ENDPOINT_LOGIN',
+        'OIDC_ENDPOINT_USERINFO', # Should stay empty <= And now ?
+        'OIDC_ENDPOINT_TOKEN',
+        'OIDC_ENDPOINT_END_SESSION', # Should stay empty
+        'OIDC_ACR_VALUES',
+        'OIDC_ENFORCE_PRIVACY',
+        'OIDC_LINK_EXISTING_USERS',
+        'OIDC_CREATE_IF_DOES_NOT_EXIST',
+        'OIDC_REDIRECT_USER_BACK',
+        'OIDC_REDIRECT_ON_LOGOUT',
+        'OIDC_ENABLE_LOGGING',
+        'OIDC_LOG_LIMIT'
+    ];
+    foreach ($openid_possible_env_keys as $openid_env_key) {
+        $option_value = getenv($openid_env_key);
+        if ($option_value === false ) {
+            continue;
+        }
+        if ($option_value === "true") {
+            $option_value = true;
+        }
+        if ($option_value === "false") {
+            $option_value = false;
+        }
+        $option_key = strtolower(str_replace('OIDC_', '', $openid_env_key));
+        error_log($option_key . " => " . $option_value);
+        $settings[$option_key] = $option_value;
     }
-    if ($env_value === "true") {
-        $env_value = true;
-    }
-    if ($env_value === "false") {
-        $env_value = false;
-    }
-    define($openid_env_key, $env_value);
+
+    // Set other settings values:
+    // - nickname_key : Sciper ID
+    // - identity_key : Entra given name
+    // - email_format : Entra given email
+    // - endpoint_userinfo : Set empty, otherwise user_claims are overridden and uniqueid is lost
+    $settings['nickname_key'] = 'uniqueid';
+    $settings['identity_key'] = 'given_name';
+    $settings['email_format'] = '{email}';
+    // $settings['endpoint_userinfo'] = '';  <= And now ?
+    update_option('openid_connect_generic_settings', $settings);
 }
 
 // Swicth to PKCE workflow if no secret has been provided : used for single page apps (SAP) configuration
 add_filter('openid-connect-generic-auth-url', function( $url ) {
-    if (getenv('OIDC_CLIENT_SECRET') !== false) {
+    if (get_option('client_secret') !== false) {
         return $url;
     }
     // Generate a random string for the code challenge
@@ -58,7 +76,7 @@ add_filter('openid-connect-generic-alter-request', function( $request, $operatio
     if ( $operation != 'get-authentication-token' && $operation != 'refresh-token' ) {
         return $request;
     }
-    if (getenv('OIDC_CLIENT_SECRET') !== false) {
+    if (get_option('client_secret') !== false) {
         return $request;
     }
     unset($request['body']['client_secret']);
@@ -83,18 +101,6 @@ add_filter('openid-connect-generic-login-button-text', function( $text ) {
     return $text;
 });
 
-// Set other settings values:
-// - nickname_key : Sciper ID
-// - identity_key : Entra given name
-// - email_format : Entra given email
-// - endpoint_userinfo : Set empty, otherwise user_claims are overridden and uniqueid is lost
-$settings = get_option('openid_connect_generic_settings', array());
-$settings['nickname_key'] = 'uniqueid';
-$settings['identity_key'] = 'given_name';
-$settings['email_format'] = '{email}';
-$settings['endpoint_userinfo'] = '';
-update_option('openid_connect_generic_settings', $settings);
-
 // Update plugin configuration fields:
 // - hide openID client secret
 // - set identity_key, nickname_key, email_format and endpoint_userinfo readonly
@@ -103,7 +109,7 @@ add_filter('openid-connect-generic-settings-fields', function( $fields ) {
     $fields['identity_key']['disabled'] = true;
     $fields['nickname_key']['disabled'] = true;
     $fields['email_format']['disabled'] = true;
-    $fields['endpoint_userinfo']['disabled'] = true;
+    // $fields['endpoint_userinfo']['disabled'] = true;
     return $fields;
 });
 
@@ -123,3 +129,6 @@ if ($show_login_form_env != "true") {
     }
     add_action('login_footer', 'remove_login_form', 99);
 }
+
+/************ Activation ********************/
+register_activation_hook(__FILE__, 'plugin_activate');
