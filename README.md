@@ -21,7 +21,6 @@ Update the Wordpress docker-compose to add these environment variables:
         OIDC_CLIENT_ID: "<YOUR_CLIENT_ID>"
         OIDC_SCOPE: "openid profile email <YOUR_CLIENT_ID>/.default"
         OIDC_ENDPOINT_LOGIN: "https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/authorize"
-        OIDC_ENDPOINT_USERINFO: "https://api.epfl.ch/v1/oidc/userinfo"
         OIDC_ENDPOINT_TOKEN: "https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/token"
         OIDC_ENFORCE_PRIVACY: true
         OIDC_LINK_EXISTING_USERS: true
@@ -40,8 +39,8 @@ array(
     'client_secret' => '',
     'scope' => 'openid profile email <YOUR_CLIENT_ID>/.default',
     'endpoint_login' => 'https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/authorize',
-    'endpoint_userinfo' => 'https://api.epfl.ch/v1/oidc/userinfo',
     'endpoint_token' => 'https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/token',
+    'endpoint_userinfo' => '',
     'endpoint_end_session' => '',
     'acr_values' => '',
     'no_sslverify' => '',

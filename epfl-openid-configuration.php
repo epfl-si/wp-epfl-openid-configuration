@@ -17,7 +17,7 @@ function plugin_activate() {
         'OIDC_CLIENT_SECRET', # Should stay empty for single page app (SPA)
         'OIDC_SCOPE',
         'OIDC_ENDPOINT_LOGIN',
-        'OIDC_ENDPOINT_USERINFO', # Should stay empty <= And now ?
+        'OIDC_ENDPOINT_USERINFO', # Should stay empty
         'OIDC_ENDPOINT_TOKEN',
         'OIDC_ENDPOINT_END_SESSION', # Should stay empty
         'OIDC_ACR_VALUES',
@@ -88,10 +88,22 @@ add_filter('openid-connect-generic-alter-request', function( $request, $operatio
     return $request;
 }, 10, 2);
 
+// Save access_token to the session, to be able to get authorizations from api.epfl.ch
+add_filter('openid-connect-modify-token-response-before-validation', function($token_response ) {
+    if (isset( $token_response['access_token'])) {
+        session_start();
+        $_SESSION['access_token'] = $token_response['access_token'];
+        session_write_close();
+    }
+    return $token_response;
+});
+
 // Add check for Accred plugin before validation OpenID login
 // Update user data based on token
 add_filter('openid-connect-generic-user-login-test', function( $result, $user_claim ) {
-    do_action("openid_save_user", $user_claim);
+    session_start();
+    $access_token = $_SESSION['access_token'];
+    do_action("openid_save_user", $access_token, $user_claim);
     return $result;
 }, 10, 2);
 
