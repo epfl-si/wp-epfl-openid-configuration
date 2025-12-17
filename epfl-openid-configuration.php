@@ -6,7 +6,7 @@
     Author:      EPFL SI
 */
 
-function plugin_activate() {
+function plugin_activate_openid_configuration() {
     // Get settings from database
     $settings = get_option('openid_connect_generic_settings', array());
 
@@ -90,6 +90,9 @@ add_filter('openid-connect-generic-alter-request', function( $request, $operatio
 
 // Save access_token to the session, to be able to get authorizations from api.epfl.ch
 add_filter('openid-connect-modify-token-response-before-validation', function($token_response ) {
+    if ( is_wp_error( $token_response ) ) {
+        return $token_response;
+    }
     if (isset( $token_response['access_token'])) {
         session_start();
         $_SESSION['access_token'] = $token_response['access_token'];
@@ -143,4 +146,4 @@ if ($show_login_form_env != "true") {
 }
 
 /************ Activation ********************/
-register_activation_hook(__FILE__, 'plugin_activate');
+register_activation_hook(__FILE__, 'plugin_activate_openid_configuration');

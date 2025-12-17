@@ -7,7 +7,7 @@ It needs the `OpenID Connect Generic Client` and the `EPFL Accred Entra` plugins
 This plugin add multiple filters definied in OpenID Connect Generic Client to:
 - permit PKCE authentification for single page applications
 - call the EPFL Accred Entra plugin to verify roles and update users
-- initialize the `openid_connect_generic_settings` option in database base on environment variables for developpement
+- initialize the `openid_connect_generic_settings` option in database based on environment variables for developpement
 
 ## Usage in developpement ##
 
@@ -40,21 +40,21 @@ array(
     'scope' => 'openid profile email <YOUR_CLIENT_ID>/.default',
     'endpoint_login' => 'https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/authorize',
     'endpoint_token' => 'https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/token',
+    'enforce_privacy' => '1',
+    'link_existing_users' => '1',
+    'identity_key' => 'given_name',
+    'nickname_key' => 'uniqueid',
+    'email_format' => '{email}',
     'endpoint_userinfo' => '',
     'endpoint_end_session' => '',
     'acr_values' => '',
     'no_sslverify' => '',
     'http_request_timeout' => '',
-    'identity_key' => 'given_name',
-    'nickname_key' => 'uniqueid',
-    'email_format' => '{email}',
     'displayname_format' => '',
     'identify_with_username' => '',
     'state_time_limit' => '',
-    'enforce_privacy' => '1',
     'alternate_redirect_uri' => '',
     'token_refresh_enable' => '',
-    'link_existing_users' => '1',
     'create_if_does_not_exist' => '',
     'redirect_user_back' => '',
     'redirect_on_logout' => '',
