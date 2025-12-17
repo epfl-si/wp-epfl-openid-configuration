@@ -25,40 +25,28 @@ Update the Wordpress docker-compose to add these environment variables:
         OIDC_ENFORCE_PRIVACY: true
         OIDC_LINK_EXISTING_USERS: true
         OIDC_CREATE_IF_DOES_NOT_EXIST: false
-        #OIDC_DEBUG_SHOW_LOGIN_FORM: true   <= Uncomment this to show the old login button, for debug purpose
+        #OIDC_HIDE_LOGIN_FORM: true   <= Uncomment this to prevent user to log in with Wordpress user/password
 ```
 
 ## Usage in test / production ##
 
-Use the Wordpress Operator to add this option for `openid_connect_generic_settings` key in the database:
+Use the Wordpress Operator to add this option for `openid_connect_generic_settings` key in the database.
 
 ```php
 array(
     'login_type' => 'button',
     'client_id' => '<YOUR_CLIENT_ID>',
-    'client_secret' => '',
     'scope' => 'openid profile email <YOUR_CLIENT_ID>/.default',
     'endpoint_login' => 'https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/authorize',
     'endpoint_token' => 'https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/token',
     'enforce_privacy' => '1',
     'link_existing_users' => '1',
+    'create_if_does_not_exist' => '',
+    'client_secret' => '',
+    'endpoint_userinfo' => '',
     'identity_key' => 'given_name',
     'nickname_key' => 'uniqueid',
     'email_format' => '{email}',
-    'endpoint_userinfo' => '',
-    'endpoint_end_session' => '',
-    'acr_values' => '',
-    'no_sslverify' => '',
-    'http_request_timeout' => '',
-    'displayname_format' => '',
-    'identify_with_username' => '',
-    'state_time_limit' => '',
-    'alternate_redirect_uri' => '',
-    'token_refresh_enable' => '',
-    'create_if_does_not_exist' => '',
-    'redirect_user_back' => '',
-    'redirect_on_logout' => '',
-    'enable_logging' => '',
-    'log_limit' => '',
+    'hide_login_form' => '', # Set to '1' instead to prevent user to log in with Wordpress user/password
 )
 ```

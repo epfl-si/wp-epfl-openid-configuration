@@ -27,7 +27,8 @@ function plugin_activate_openid_configuration() {
         'OIDC_REDIRECT_USER_BACK',
         'OIDC_REDIRECT_ON_LOGOUT',
         'OIDC_ENABLE_LOGGING',
-        'OIDC_LOG_LIMIT'
+        'OIDC_LOG_LIMIT',
+        'OIDC_HIDE_LOGIN_FORM'
     ];
     foreach ($openid_possible_env_keys as $openid_env_key) {
         $option_value = getenv($openid_env_key);
@@ -119,19 +120,26 @@ add_filter('openid-connect-generic-login-button-text', function( $text ) {
 // Update plugin configuration fields:
 // - hide openID client secret
 // - set identity_key, nickname_key, email_format and endpoint_userinfo readonly
+// - add field hide login form
 add_filter('openid-connect-generic-settings-fields', function( $fields ) {
     unset($fields["client_secret"]);
     $fields['identity_key']['disabled'] = true;
     $fields['nickname_key']['disabled'] = true;
     $fields['email_format']['disabled'] = true;
+    $fields['hide_login_form'] = array(
+        'title' => __('Hide login form'),
+        'description' => __('Prevent user to log in with Wordpress user/password'),
+        'type' => 'checkbox',
+        'section' => 'authorization_settings',
+    );
     // $fields['endpoint_userinfo']['disabled'] = true;
     return $fields;
 });
 
-$show_login_form_env = getenv('OIDC_DEBUG_SHOW_LOGIN_FORM');
-if ($show_login_form_env != "true") {
+$settings = get_option('openid_connect_generic_settings', array());
+if (isset($settings['hide_login_form']) && $settings['hide_login_form'] == true) {
     // Disable login form to force login with OpenID Connect
-    function remove_login_form() {
+    function hide_login_form() {
         ?>
         <script type="text/javascript">
             (function() {
@@ -142,7 +150,7 @@ if ($show_login_form_env != "true") {
         </script>
         <?php
     }
-    add_action('login_footer', 'remove_login_form', 99);
+    add_action('login_footer', 'hide_login_form', 99);
 }
 
 /************ Activation ********************/
