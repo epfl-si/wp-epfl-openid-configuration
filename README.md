@@ -1,6 +1,6 @@
 This plugin permits to automatically configure the OpenID Connect Generic Client to work with the EPFL Accred Entra plugin
 
-It needs the `OpenID Connect Generic Client` and the `EPFL Accred Entra` plugins to work.
+It needs the [OpenID Connect Generic Client](https://github.com/epfl-si/openid-connect-generic) and the [EPFL Accred Entra](https://github.com/epfl-si/wordpress.plugin.accred.entra) plugins to work.
 
 ## Functionalities ##
 
@@ -17,7 +17,7 @@ Update the Wordpress docker-compose to add these environment variables:
   php:
     [...]
     environment:
-        OIDC_LOGIN_TYPE: "button"
+        OIDC_LOGIN_TYPE: "button" # Set to "auto" instead to not show login form and directly be redirected to OIDC authentication
         OIDC_CLIENT_ID: "<YOUR_CLIENT_ID>"
         OIDC_SCOPE: "openid profile email <YOUR_CLIENT_ID>/.default"
         OIDC_ENDPOINT_LOGIN: "https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/authorize"
@@ -34,7 +34,7 @@ Use the Wordpress Operator to add this option for `openid_connect_generic_settin
 
 ```php
 array(
-    'login_type' => 'button',
+    'login_type' => 'button', # Set to 'auto' instead to not show login form and directly be redirected to OIDC authentication
     'client_id' => '<YOUR_CLIENT_ID>',
     'scope' => 'openid profile email <YOUR_CLIENT_ID>/.default',
     'endpoint_login' => 'https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/authorize',
