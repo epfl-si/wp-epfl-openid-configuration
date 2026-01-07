@@ -17,7 +17,7 @@ function plugin_activate_openid_configuration() {
         'OIDC_CLIENT_SECRET', # Should stay empty for single page app (SPA)
         'OIDC_SCOPE',
         'OIDC_ENDPOINT_LOGIN',
-        'OIDC_ENDPOINT_USERINFO', # Should stay empty
+        'OIDC_ENDPOINT_USERINFO',
         'OIDC_ENDPOINT_TOKEN',
         'OIDC_ENDPOINT_END_SESSION', # Should stay empty
         'OIDC_ACR_VALUES',
@@ -50,11 +50,9 @@ function plugin_activate_openid_configuration() {
     // - nickname_key : Sciper ID
     // - identity_key : Entra given name
     // - email_format : Entra given email
-    // - endpoint_userinfo : Set empty, otherwise user_claims are overridden and uniqueid is lost
     $settings['nickname_key'] = 'uniqueid';
     $settings['identity_key'] = 'given_name';
     $settings['email_format'] = '{email}';
-    // $settings['endpoint_userinfo'] = '';  <= And now ?
     update_option('openid_connect_generic_settings', $settings);
 }
 
