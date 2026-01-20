@@ -23,7 +23,6 @@ Update the Wordpress docker-compose to add these environment variables:
         OIDC_ENDPOINT_LOGIN: "https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/authorize"
         OIDC_ENDPOINT_TOKEN: "https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/token"
         OIDC_ENDPOINT_USERINFO: "https://api.epfl.ch/v1/oidc/userinfo"
-        OIDC_ENFORCE_PRIVACY: true
         OIDC_LINK_EXISTING_USERS: true
         OIDC_CREATE_IF_DOES_NOT_EXIST: false
         #OIDC_HIDE_LOGIN_FORM: true   <= Uncomment this to prevent user to log in with Wordpress user/password
@@ -41,7 +40,7 @@ array(
     'endpoint_login' => 'https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/authorize',
     'endpoint_token' => 'https://login.microsoftonline.com/f6c2556a-c4fb-4ab1-a2c7-9e220df11c43/oauth2/v2.0/token',
     'endpoint_userinfo' => 'https://api.epfl.ch/v1/oidc/userinfo',
-    'enforce_privacy' => '1',
+    'enforce_privacy' => '0', # Set to '1' instead to force user to be logged in to access the website
     'link_existing_users' => '1',
     'create_if_does_not_exist' => '',
     'client_secret' => '',
