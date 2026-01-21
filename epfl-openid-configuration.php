@@ -59,7 +59,7 @@ function plugin_activate_openid_configuration() {
 // Swicth to PKCE workflow if no secret has been provided : used for single page apps (SAP) configuration
 add_filter('openid-connect-generic-auth-url', function( $url ) {
     $settings = get_option('openid_connect_generic_settings', array());
-    if (isset($settings['client_secret']) && $settings['client_secret'] !== false) {
+    if (isset($settings['client_secret']) && $settings['client_secret'] !== '') {
         return $url;
     }
 
@@ -86,7 +86,7 @@ add_filter('openid-connect-generic-alter-request', function( $request, $operatio
         return $request;
     }
     $settings = get_option('openid_connect_generic_settings', array());
-    if (isset($settings['client_secret']) && $settings['client_secret'] !== false) {
+    if (isset($settings['client_secret']) && $settings['client_secret'] !== '') {
         return $request;
     }
     unset($request['body']['client_secret']);
