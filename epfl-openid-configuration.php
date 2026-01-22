@@ -64,10 +64,11 @@ add_filter('openid-connect-generic-auth-url', function( $url ) {
     }
 
     // Generate a random string for the code challenge
-    $code_challenge = bin2hex(random_bytes(64));
-    $hash = hash('sha256', $code_challenge, true);
+    $code_verifier = bin2hex(random_bytes(64));
+    $hash = hash('sha256', $code_verifier, true);
     $code_challenge = rtrim(strtr(base64_encode($hash), '+/', '-_'), '=');
     $url.= '&code_challenge=' . $code_challenge;
+    $url .= '&code_challenge_method=S256';
     
     $parsed = wp_parse_url($url);
     $query  = [];
@@ -76,7 +77,7 @@ add_filter('openid-connect-generic-auth-url', function( $url ) {
 
     set_transient(
         'epfl_oidc_pkce_' . $state,
-        $code_challenge,
+        $code_verifier,
         15 * MINUTE_IN_SECONDS
     );
     return $url;
