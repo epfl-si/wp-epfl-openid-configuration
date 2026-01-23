@@ -2,7 +2,7 @@
 /*
     Plugin Name: EPFL-OpenID-Configuration
     Description: EPFL OpenID-Configuration
-    Version:     1.0.0
+    Version:     1.0.1
     Author:      EPFL SI
 */
 
@@ -47,11 +47,11 @@ function plugin_activate_openid_configuration() {
     }
 
     // Set other settings values:
-    // - nickname_key : Sciper ID
-    // - identity_key : Entra given name
+    // - nickname_key : gaspar
+    // - identity_key : Entra uniqueid
     // - email_format : Entra given email
-    $settings['nickname_key'] = 'uniqueid';
-    $settings['identity_key'] = 'given_name';
+    $settings['nickname_key'] = 'gaspar';
+    $settings['identity_key'] = 'uniqueid';
     $settings['email_format'] = '{email}';
     update_option('openid_connect_generic_settings', $settings);
 }
